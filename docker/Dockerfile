@@ -18,3 +18,4 @@ RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 10 --sl
 RUN ln -s /usr/bin/convert /usr/bin/magick
 
 ENV DEBIAN_FRONTEND=
+

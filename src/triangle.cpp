@@ -1,6 +1,9 @@
 #include "triangle.h"
 
 Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0), t, 0., 0., 0., 0., 0.){
+   ax = a.x; ay = a.y; az = a.z;
+   bx = b.x; by = b.y; bz = b.z;
+   cx = c.x; cy = c.y; cz = c.z;
    center = c;
    Vector righta = (b-c);
    textureX = righta.mag();
@@ -38,14 +41,51 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0)
    d = -vect.dot(center);
 }
 
-double Triangle::getIntersection(Ray ray){
-   double time = Plane::getIntersection(ray);
-   if(time==inf) 
-      return time;
-   Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*time-center); 
-   unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
-   return((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0)))?inf:time;
+
+
+// double Triangle::getIntersection(Ray ray) {
+//    double time = Plane::getIntersection(ray);
+//    if(time==inf) 
+//       return time;
+//    Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*time-center); 
+//    unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
+//    return((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0)))?inf:time;
+// }
+// //16.35s 
+
+
+double Triangle::getIntersection(Ray ray) {
+   const double EPSILON = 1e-6;
+
+   Vector v0 = Vector(ax, ay, az);
+   Vector v1 = Vector(bx, by, bz);
+   Vector v2 = Vector(cx, cy, cz);
+   // std::cout << ax << " " << ay << " " << az << std::endl;
+   Vector edge1 = v1 - v0;
+   Vector edge2 = v2 - v0;
+   
+   Vector h = ray.vector.cross(edge2);
+   double a = edge1.dot(h);
+   if (fabs(a) < EPSILON)
+      return inf; 
+   
+   double f = 1.0 / a;
+   Vector s = - v0 + ray.point;
+   double u = f * s.dot(h);
+   if (u < 0.0 || u > 1.0)
+      return inf;
+   
+   Vector q = s.cross(edge1);
+   double v = f * ray.vector.dot(q);
+   if (v < 0.0 || (u + v) > 1.0)
+      return inf;
+   
+   double t = f * edge2.dot(q);
+   return (t > EPSILON) ? t : inf;
 }
+// 11.68s
+
+
 
 bool Triangle::getLightIntersection(Ray ray, double* fill){
    const double t = ray.vector.dot(vect);

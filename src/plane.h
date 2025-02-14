@@ -18,6 +18,11 @@ public:
   void setYaw(double d);
   void setPitch(double d);
   void setRoll(double d);
+  void getAABB(AABB& outBox) const override {
+        double INF = 1e30;
+        outBox.minPt = Vector(-INF, -INF, -INF);
+        outBox.maxPt = Vector( INF,  INF,  INF);
+    }
 };
 
 #endif

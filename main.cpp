@@ -46,6 +46,7 @@ void set(int i, int j, unsigned char r, unsigned char g, unsigned char b){
 }
 
 void refresh(Autonoma* c){
+   #pragma omp parallel for
    for(int n = 0; n<H*W; ++n) 
    { 
       Vector ra = c->camera.forward+((double)(n%W)/W-.5)*((c->camera.right))+(.5-(double)(n/W)/H)*((c->camera.up));
@@ -432,7 +433,29 @@ void setFrame(const char* animateFile, Autonoma* MAIN_DATA, int frame, int frame
          }
       }
    }
+   // MAIN_DATA->shapes.clear();
+   // for (ShapeNode* node = MAIN_DATA->listStart; node != nullptr; node = node->next) {
+   //    MAIN_DATA->shapes.push_back(node->data);
+   // }
 
+   // std::vector<AABB> bounds(MAIN_DATA->shapes.size());
+   // for (size_t i = 0; i < MAIN_DATA->shapes.size(); i++) {
+   //    MAIN_DATA->shapes[i]->getAABB(bounds[i]);
+   // }
+
+   // std::vector<ShapeInfo> shapeInfos;
+   // shapeInfos.reserve(MAIN_DATA->shapes.size());
+   // #pragma omp parallel for
+   // for (size_t i = 0; i < MAIN_DATA->shapes.size(); i++) {
+   //    ShapeInfo si;
+   //    si.shape = MAIN_DATA->shapes[i];
+   //    si.shape->getAABB(si.bound); 
+   //    #pragma omp critical
+   //    {
+   //       shapeInfos.push_back(si);
+   //    }
+   // }
+   // MAIN_DATA->bvhRoot = buildBVH(shapeInfos, 0, shapeInfos.size());
    refresh(MAIN_DATA);
 }
 

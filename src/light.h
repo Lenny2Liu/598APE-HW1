@@ -1,9 +1,12 @@
 #ifndef __LIGHT_H__
 #define __LIGHT_H__
+#include <algorithm>
+#include <vector>
 #include "vector.h"
 #include "camera.h"
 #include "Textures/texture.h"
 #include "Textures/colortexture.h"
+
 
 class Light{
   public:
@@ -24,6 +27,34 @@ struct ShapeNode{
    ShapeNode* prev, *next;
 };
 
+struct AABB {
+    Vector minPt;
+    Vector maxPt;
+    AABB() : minPt(0,0,0), maxPt(0,0,0) {}
+};
+
+inline AABB combine(const AABB& a, const AABB& b) {
+    AABB r;
+    r.minPt.x = std::min(a.minPt.x, b.minPt.x);
+    r.minPt.y = std::min(a.minPt.y, b.minPt.y);
+    r.minPt.z = std::min(a.minPt.z, b.minPt.z);
+    r.maxPt.x = std::max(a.maxPt.x, b.maxPt.x);
+    r.maxPt.y = std::max(a.maxPt.y, b.maxPt.y);
+    r.maxPt.z = std::max(a.maxPt.z, b.maxPt.z);
+    return r;
+}
+
+struct BVHNode {
+    AABB bound;
+    int start; 
+    int end;
+    BVHNode* left;
+    BVHNode* right;
+
+    BVHNode() : start(-1), end(-1), left(nullptr), right(nullptr) {}
+};
+
+
 class Autonoma{
 public:
    Camera camera;
@@ -31,6 +62,8 @@ public:
    unsigned int depth;
    ShapeNode *listStart, *listEnd;
    LightNode *lightStart, *lightEnd;
+   BVHNode* bvhRoot;
+   std::vector<Shape*> shapes;
    Autonoma(const Camera &c);
    Autonoma(const Camera &c, Texture* tex);
    void addShape(Shape* s);

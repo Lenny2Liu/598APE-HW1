@@ -13,6 +13,16 @@ public:
   double x, y, z;
   Vector(double a, double b, double c);
   
+  double dot(const Vector &v) const {
+        return x * v.x + y * v.y + z * v.z;
+    }
+  Vector cross(const Vector &v) const {
+      return Vector(
+          y * v.z - z * v.y,
+          z * v.x - x * v.z,
+          x * v.y - y * v.x
+      );
+  }
   
   void operator +=(const Vector);
   void operator -= (const Vector);

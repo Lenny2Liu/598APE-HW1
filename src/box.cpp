@@ -1,7 +1,15 @@
 #include "box.h"
 
-Box::Box(const Vector &c, Texture* t, double ya, double pi, double ro, double tx, double ty):Plane(c, t, ya, pi, ro, tx, ty){}
-Box::Box(const Vector &c, Texture* t, double ya, double pi, double ro, double tx):Plane(c, t, ya, pi, ro, tx,tx){}
+Box::Box(const Vector &c, Texture* t, double ya, double pi, double ro, double tx, double ty):Plane(c, t, ya, pi, ro, tx, ty){
+   halfX = tx/2;
+   halfY = ty/2;
+   halfZ = 0;
+}
+Box::Box(const Vector &c, Texture* t, double ya, double pi, double ro, double tx):Plane(c, t, ya, pi, ro, tx,tx){
+   halfX = tx/2;
+   halfY = 0;
+   halfZ = 0;
+}
 
 double Box::getIntersection(Ray ray){
    double time = Plane::getIntersection(ray);

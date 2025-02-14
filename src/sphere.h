@@ -16,5 +16,17 @@ public:
   void setYaw(double a);
   void setPitch(double b);
   void setRoll(double c);
+  void getAABB(AABB& outBox) const override {
+        outBox.minPt = Vector(
+            center.x - radius,
+            center.y - radius,
+            center.z - radius
+        );
+        outBox.maxPt = Vector(
+            center.x + radius,
+            center.y + radius,
+            center.z + radius
+        );
+    }
 };
 #endif

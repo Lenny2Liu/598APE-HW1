@@ -1,0 +1,17 @@
+output/
+log/
+main.dSYM/
+main
+*.exe
+/src/*.obj
+*.svg
+*.pdf
+*.folded
+*.perf
+*.data
+*.data.old
+/bin
+/.vscode
+.DS_Store
+/FlameGraph
+src/Textures/*.obj

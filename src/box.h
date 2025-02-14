@@ -4,6 +4,7 @@
 
 class Box : public Plane{
 public:
+  double halfX, halfY, halfZ;
   Box(const Vector &c, Texture* t, double ya, double pi, double ro, double tx, double ty);
   Box(const Vector &c, Texture* t, double ya, double pi, double ro, double tx);
   double getIntersection(Ray ray);
