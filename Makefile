@@ -1,6 +1,6 @@
 CXX       := g++
-CXXFLAGS  := -O3 -g -Werror -fopenmp -std=c++11
-LDFLAGS   := -lm -fopenmp
+CXXFLAGS  := -O3 -march=native -flto -fopenmp -std=c++11 -Werror -g
+LDFLAGS   := -lm -fopenmp -flto
 
 OBJ_DIR   := bin
 

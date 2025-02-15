@@ -199,19 +199,15 @@ bool intersectBVH(const BVHNode* node, const Ray& ray, double& outT, Shape*& out
     
     if(!node) return false;
     if(!intersectAABB(node->bound, ray)) {
-        // std::cout << node << std::endl;
         return false;
     }
-    // std::cout << node << std::endl;
     
     if(node->left == nullptr && node->right == nullptr) {
         bool hit = false;
         for(int i = node->start; i<node->end; i++){
             Shape* s = shapes[i];
             double t = s->getIntersection(ray);
-            // std::cout << t << std::endl;
             if(t > 1e-6 && t < outT){
-                // std::cout << t << std::endl;
                 outT     = t;
                 outShape = s;
                 hit      = true;

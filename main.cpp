@@ -433,29 +433,29 @@ void setFrame(const char* animateFile, Autonoma* MAIN_DATA, int frame, int frame
          }
       }
    }
-   // MAIN_DATA->shapes.clear();
-   // for (ShapeNode* node = MAIN_DATA->listStart; node != nullptr; node = node->next) {
-   //    MAIN_DATA->shapes.push_back(node->data);
-   // }
+   MAIN_DATA->shapes.clear();
+   for (ShapeNode* node = MAIN_DATA->listStart; node != nullptr; node = node->next) {
+      MAIN_DATA->shapes.push_back(node->data);
+   }
 
-   // std::vector<AABB> bounds(MAIN_DATA->shapes.size());
-   // for (size_t i = 0; i < MAIN_DATA->shapes.size(); i++) {
-   //    MAIN_DATA->shapes[i]->getAABB(bounds[i]);
-   // }
+   std::vector<AABB> bounds(MAIN_DATA->shapes.size());
+   for (size_t i = 0; i < MAIN_DATA->shapes.size(); i++) {
+      MAIN_DATA->shapes[i]->getAABB(bounds[i]);
+   }
 
-   // std::vector<ShapeInfo> shapeInfos;
-   // shapeInfos.reserve(MAIN_DATA->shapes.size());
-   // #pragma omp parallel for
-   // for (size_t i = 0; i < MAIN_DATA->shapes.size(); i++) {
-   //    ShapeInfo si;
-   //    si.shape = MAIN_DATA->shapes[i];
-   //    si.shape->getAABB(si.bound); 
-   //    #pragma omp critical
-   //    {
-   //       shapeInfos.push_back(si);
-   //    }
-   // }
-   // MAIN_DATA->bvhRoot = buildBVH(shapeInfos, 0, shapeInfos.size());
+   std::vector<ShapeInfo> shapeInfos;
+   shapeInfos.reserve(MAIN_DATA->shapes.size());
+   #pragma omp parallel for
+   for (size_t i = 0; i < MAIN_DATA->shapes.size(); i++) {
+      ShapeInfo si;
+      si.shape = MAIN_DATA->shapes[i];
+      si.shape->getAABB(si.bound); 
+      #pragma omp critical
+      {
+         shapeInfos.push_back(si);
+      }
+   }
+   MAIN_DATA->bvhRoot = buildBVH(shapeInfos, 0, shapeInfos.size());
    refresh(MAIN_DATA);
 }
 
