@@ -30,7 +30,7 @@ struct ShapeInfo {
     AABB   bound; 
 };
 
-BVHNode* buildBVH(std::vector<ShapeInfo>& shapeInfos, int start, int end);
+BVHNode* buildBVH(std::vector<ShapeInfo>& shapeInfos, int start, int end, int depth, int maxDepth, int minLeaf);
 void calcColor(unsigned char* toFill, Autonoma*, Ray ray, unsigned int depth);
 
 #endif

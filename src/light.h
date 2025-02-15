@@ -30,6 +30,11 @@ struct ShapeNode{
 struct AABB {
     Vector minPt;
     Vector maxPt;
+    double surfaceArea() const {
+        Vector d = maxPt;
+        d -= minPt;
+        return 2.0 * (d.x * d.y + d.x * d.z + d.y * d.z);
+    }
     AABB() : minPt(0,0,0), maxPt(0,0,0) {}
 };
 

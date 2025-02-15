@@ -58,7 +58,6 @@ void insertionSort(TimeAndShape *arr, int n) {
 //    size_t seen = 0;
 //    while(t!=NULL){
 //       double time = t->data->getIntersection(ray);
-
 //       TimeAndShape *times2 = (TimeAndShape*)malloc(sizeof(TimeAndShape)*(seen + 1));
 //       for (int i=0; i<seen; i++)
 //          times2[i] = times[i];
@@ -79,15 +78,12 @@ void insertionSort(TimeAndShape *arr, int n) {
 //       c->skybox->getColor(toFill, &ambient, &opacity, &reflection, fix(angle/M_TWO_PI),fix(me));
 //       return;
 //    }
-
 //    double curTime = times[0].time;
 //    Shape* curShape = times[0].shape;
 //    free(times);
-
 //    Vector intersect = curTime*ray.vector+ray.point;
 //    double opacity, reflection, ambient;
 //    curShape->getColor(toFill, &ambient, &opacity, &reflection, c, Ray(intersect, ray.vector), depth);
-   
 //    double lightData[3];
 //    getLight(lightData, c, intersect, curShape->getNormal(intersect), curShape->reversible());
 //    toFill[0] = (unsigned char)(toFill[0]*(ambient+lightData[0]*(1-ambient)));
@@ -107,7 +103,6 @@ void insertionSort(TimeAndShape *arr, int n) {
 //          Vector vec = ray.vector-2*norm*(norm.dot(ray.vector));
 //          Ray nextRay = Ray(intersect+vec*1E-4, vec);
 //          calcColor(col, c, nextRay, depth+1);
-      
 //          toFill[0]= (unsigned char)(toFill[0]*(1-reflection)+col[0]*(reflection));
 //          toFill[1]= (unsigned char)(toFill[1]*(1-reflection)+col[1]*(reflection));
 //          toFill[2]= (unsigned char)(toFill[2]*(1-reflection)+col[2]*(reflection));
@@ -134,22 +129,88 @@ inline bool intersectAABB(const AABB& box, const Ray& ray) {
 }
 
 
-BVHNode* buildBVH(std::vector<ShapeInfo>& shapeInfos, int start, int end)
+// BVHNode* buildBVH(std::vector<ShapeInfo>& shapeInfos, int start, int end)
+// {
+//     BVHNode* node = new BVHNode();
+//     AABB box;
+
+//     box.minPt = Vector( inf,  inf,  inf);
+//     box.maxPt = Vector(-inf, -inf, -inf);
+
+//     for(int i = start; i < end; i++) {
+//         box = combine(box, shapeInfos[i].bound);
+//     }
+//     node->bound = box;
+
+//     int count = end - start;
+
+//     if(count <= 2) {
+//         node->start = start;
+//         node->end   = end;
+//         node->left  = nullptr;
+//         node->right = nullptr;
+//         return node;
+//     }
+
+//     Vector size = box.maxPt - box.minPt;
+//     int axis = 0;
+//     if(size.y > size.x && size.y > size.z) axis = 1;
+//     else if(size.z > size.x && size.z > size.y) axis = 2;
+
+//     double mid = 0.0;
+//     for(int i = start; i<end; i++){
+//         AABB &b = shapeInfos[i].bound;
+//         double c = 0.5 * ((axis == 0 ? b.minPt.x : (axis == 1 ? b.minPt.y : b.minPt.z)) + 
+//                         (axis == 0 ? b.maxPt.x : (axis == 1 ? b.maxPt.y : b.maxPt.z)));
+//         mid += c;
+//     }
+//     mid /= count;
+
+//     auto pivot = std::partition(shapeInfos.begin() + start, shapeInfos.begin() + end,
+//         [&](const ShapeInfo &si){
+//             double c = 0.5 * ((axis == 0 ? si.bound.minPt.x : (axis == 1 ? si.bound.minPt.y : si.bound.minPt.z)) + 
+//                             (axis == 0 ? si.bound.maxPt.x : (axis == 1 ? si.bound.maxPt.y : si.bound.maxPt.z)));
+//             return c < mid;
+//         }
+//     );
+//     int m = (int)(pivot - shapeInfos.begin());
+
+//     if(m == start || m == end) {
+//         m = start + (count / 2);
+//     }
+
+//     node->left  = buildBVH(shapeInfos, start, m);
+//     node->right = buildBVH(shapeInfos, m, end);
+//     node->start = -1;
+//     node->end   = -1;
+//     return node;
+// }
+
+
+
+
+
+
+
+// SAH
+BVHNode* buildBVH(std::vector<ShapeInfo>& shapeInfos,
+                      int start, int end,
+                      int depth = 0,
+                      int maxDepth = 32,
+                      int minLeaf = 2)
 {
     BVHNode* node = new BVHNode();
     AABB box;
-
     box.minPt = Vector( inf,  inf,  inf);
     box.maxPt = Vector(-inf, -inf, -inf);
-
-    for(int i = start; i < end; i++) {
+    for(int i = start; i < end; i++){
         box = combine(box, shapeInfos[i].bound);
     }
     node->bound = box;
 
     int count = end - start;
 
-    if(count <= 2) {
+    if(count <= minLeaf || depth >= maxDepth) {
         node->start = start;
         node->end   = end;
         node->left  = nullptr;
@@ -157,40 +218,79 @@ BVHNode* buildBVH(std::vector<ShapeInfo>& shapeInfos, int start, int end)
         return node;
     }
 
-    Vector size = box.maxPt - box.minPt;
-    int axis = 0;
-    if(size.y > size.x && size.y > size.z) axis = 1;
-    else if(size.z > size.x && size.z > size.y) axis = 2;
+    double leafCost = double(count); 
+    double bestCost = inf;
+    int    bestAxis = -1;
+    int    bestPos  = -1;
 
-    double mid = 0.0;
-    for(int i = start; i<end; i++){
-        AABB &b = shapeInfos[i].bound;
-        double c = 0.5 * ((axis == 0 ? b.minPt.x : (axis == 1 ? b.minPt.y : b.minPt.z)) + 
-                        (axis == 0 ? b.maxPt.x : (axis == 1 ? b.maxPt.y : b.maxPt.z)));
-        mid += c;
+    double parentArea = box.surfaceArea();
+    if(parentArea < 1e-12) {
+        node->start = start;
+        node->end   = end;
+        return node;
     }
-    mid /= count;
 
-    auto pivot = std::partition(shapeInfos.begin() + start, shapeInfos.begin() + end,
-        [&](const ShapeInfo &si){
-            double c = 0.5 * ((axis == 0 ? si.bound.minPt.x : (axis == 1 ? si.bound.minPt.y : si.bound.minPt.z)) + 
-                            (axis == 0 ? si.bound.maxPt.x : (axis == 1 ? si.bound.maxPt.y : si.bound.maxPt.z)));
-            return c < mid;
+    for(int axis = 0; axis < 3; axis++) {
+        std::sort(shapeInfos.begin()+start, shapeInfos.begin()+end,
+            [axis](const ShapeInfo &a, const ShapeInfo &b){
+                double ac = 0.5 * ( (axis == 0 ? a.bound.minPt.x : (axis == 1 ? a.bound.minPt.y : a.bound.minPt.z)) + 
+                                    (axis == 0 ? a.bound.maxPt.x : (axis == 1 ? a.bound.maxPt.y : a.bound.maxPt.z)) );
+                double bc = 0.5 * ( (axis == 0 ? b.bound.minPt.x : (axis == 1 ? b.bound.minPt.y : b.bound.minPt.z)) + 
+                                    (axis == 0 ? b.bound.maxPt.x : (axis == 1 ? b.bound.maxPt.y : b.bound.maxPt.z)) );
+                return ac < bc;
+            }
+        );
+
+        int n = count;
+        std::vector<AABB> prefixAABB(n), suffixAABB(n);
+
+        prefixAABB[0] = shapeInfos[start].bound;
+        for(int i=1; i<n; i++){
+            prefixAABB[i] = combine(prefixAABB[i-1], shapeInfos[start + i].bound);
+        }
+        suffixAABB[n-1] = shapeInfos[end - 1].bound;
+        for(int i=n-2; i>=0; i--){
+            suffixAABB[i] = combine(suffixAABB[i+1], shapeInfos[start + i].bound);
+        }
+
+        for(int i=1; i<n; i++){
+            double leftArea  = prefixAABB[i-1].surfaceArea();
+            double rightArea = suffixAABB[i].surfaceArea();
+            int leftCount  = i;
+            int rightCount = n - i;
+
+            double cost = 1.0 + (leftArea*leftCount + rightArea*rightCount)/parentArea;
+            if(cost < bestCost){
+                bestCost = cost;
+                bestAxis = axis;
+                bestPos  = i;
+            }
+        }
+    }
+
+    if(bestCost >= leafCost || bestAxis < 0) {
+        node->start = start;
+        node->end   = end;
+        return node;
+    }
+
+    std::sort(shapeInfos.begin()+start, shapeInfos.begin()+end,
+        [bestAxis](const ShapeInfo &a, const ShapeInfo &b){
+            double ac = 0.5 * ((bestAxis == 0 ? a.bound.minPt.x : (bestAxis == 1 ? a.bound.minPt.y : a.bound.minPt.z)) + 
+                               (bestAxis == 0 ? a.bound.maxPt.x : (bestAxis == 1 ? a.bound.maxPt.y : a.bound.maxPt.z)));
+            double bc = 0.5 * ((bestAxis == 0 ? b.bound.minPt.x : (bestAxis == 1 ? b.bound.minPt.y : b.bound.minPt.z)) + 
+                               (bestAxis == 0 ? b.bound.maxPt.x : (bestAxis == 1 ? b.bound.maxPt.y : b.bound.maxPt.z)));
+            return ac < bc;
         }
     );
-    int m = (int)(pivot - shapeInfos.begin());
+    int splitIdx = start + bestPos;
 
-    if(m == start || m == end) {
-        m = start + (count / 2);
-    }
-
-    node->left  = buildBVH(shapeInfos, start, m);
-    node->right = buildBVH(shapeInfos, m, end);
     node->start = -1;
     node->end   = -1;
+    node->left  = buildBVH(shapeInfos, start, splitIdx, depth+1, maxDepth, minLeaf);
+    node->right = buildBVH(shapeInfos, splitIdx, end, depth+1, maxDepth, minLeaf);
     return node;
 }
-
 
 
 bool intersectBVH(const BVHNode* node, const Ray& ray, double& outT, Shape*& outShape,

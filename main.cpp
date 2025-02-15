@@ -455,7 +455,7 @@ void setFrame(const char* animateFile, Autonoma* MAIN_DATA, int frame, int frame
          shapeInfos.push_back(si);
       }
    }
-   MAIN_DATA->bvhRoot = buildBVH(shapeInfos, 0, shapeInfos.size());
+   MAIN_DATA->bvhRoot = buildBVH(shapeInfos, 0, shapeInfos.size(), 0, 32, 2);
    refresh(MAIN_DATA);
 }
 
