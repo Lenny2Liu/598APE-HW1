@@ -189,8 +189,9 @@ inline bool intersectAABB(const AABB& box, const Ray& ray) {
 
 //     if(m == start || m == end) {
 //         m = start + (count / 2);
-//     } ./FlameGraph/stackcollapse-perf.pl out.perf > out.folded
-// ./FlameGraph/flamegraph.pl out.folded > flamegraph.svg
+//     } 
+//     // ./FlameGraph/stackcollapse-perf.pl out.perf > out.folded
+// // ./FlameGraph/flamegraph.pl out.folded > flamegraph.svg
 
 //     node->left  = buildBVH(shapeInfos, start, m);
 //     node->right = buildBVH(shapeInfos, m, end);
