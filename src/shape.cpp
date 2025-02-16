@@ -35,6 +35,18 @@ void Shape::setRoll(double c){
    zsin = sin(roll);
 }
 
+Shape::~Shape() {
+    if (texture) {
+        delete texture;
+        texture = nullptr;
+    }
+    if (normalMap) {
+        delete normalMap;
+        normalMap = nullptr;
+    }
+}
+
+
 typedef struct {
    double time;
    Shape* shape;
@@ -177,7 +189,8 @@ inline bool intersectAABB(const AABB& box, const Ray& ray) {
 
 //     if(m == start || m == end) {
 //         m = start + (count / 2);
-//     }
+//     } ./FlameGraph/stackcollapse-perf.pl out.perf > out.folded
+// ./FlameGraph/flamegraph.pl out.folded > flamegraph.svg
 
 //     node->left  = buildBVH(shapeInfos, start, m);
 //     node->right = buildBVH(shapeInfos, m, end);
@@ -185,11 +198,6 @@ inline bool intersectAABB(const AABB& box, const Ray& ray) {
 //     node->end   = -1;
 //     return node;
 // }
-
-
-
-
-
 
 
 // SAH

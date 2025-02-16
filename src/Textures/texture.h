@@ -8,6 +8,7 @@
 #include <stdio.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <math.h>
 class Texture{
 public:
 /** from 0 to 1 **/
@@ -15,6 +16,7 @@ public:
    Texture(double am, double op, double ref);
    virtual void getColor(unsigned char* toFill, double* am, double *opacity, double *reflection,double x, double y) = 0;
    Texture* clone();
+   virtual ~Texture() {}
 };
 
  double interpolate(double a,double b,double x);

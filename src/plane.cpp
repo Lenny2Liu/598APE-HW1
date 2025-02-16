@@ -2,6 +2,7 @@
 
 Plane::Plane(const Vector &c, Texture* t, double ya, double pi, double ro, double tx, double ty) : Shape(c, t, ya, pi, ro), vect(c), right(c), up(c){
    textureX = tx; textureY = ty;
+   vect = Vector(0, 0, 1);
    setAngles(yaw, pitch, roll);
    normalMap = NULL;
    mapX = textureX; mapY = textureY;
@@ -113,9 +114,12 @@ Vector Plane::getNormal(Vector point){
       return vect;
    else{
       Vector dist = solveScalers(right, up, vect, point-center);
-      double am, ref, op;
-      unsigned char norm[3];
-      normalMap->getColor(norm, &am, &op, &ref, fix(dist.x/mapX-.5+mapOffX), fix(dist.y/mapY-.5+mapOffY));
+      double am = 0.0, ref = 0.0, op = 0.0;
+      unsigned char norm[3] = {128, 128, 128};
+
+      double fixedX = fix(dist.x / mapX - 0.5 + mapOffX);
+      double fixedY = fix(dist.y / mapY - 0.5 + mapOffY);
+      normalMap->getColor(norm, &am, &op, &ref, fixedX, fixedY);
       Vector ret = ((norm[0]-128)*right+(norm[1]-128)*up+norm[2]*vect).normalize();
       return ret;
    }

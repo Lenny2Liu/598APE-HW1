@@ -13,6 +13,7 @@
 #include<stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <array>
 using namespace std;
 
 #include <sys/time.h>
@@ -327,6 +328,8 @@ Autonoma* createInputs(const char* inputFile) {
                MAIN_DATA->addShape(shape);
                shape->normalMap = normalMap;
             }
+            free(points);
+            free(polys);
          } else {
            printf("Unknown object type %s\n", object_type);
            exit(1);
@@ -587,6 +590,8 @@ int main(int argc, const char** argv){
       }
       return system(command);
    }   
+   delete MAIN_DATA;
+   MAIN_DATA = nullptr;
    return 0;
    
 }

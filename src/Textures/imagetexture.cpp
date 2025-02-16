@@ -1,14 +1,27 @@
 #include "imagetexture.h"
+#include <algorithm>
 
-void ImageTexture::getColor(unsigned char* toFill, double* am, double *op, double *ref, double x, double y){
-   int xi = (int)(x*w), yi = (int)(y*h);
-   int p1 = 4*(xi+w*yi);
-   toFill[0] = imageData[p1];
-   toFill[1] = imageData[p1+1];
-   toFill[2] = imageData[p1+2];
-   *op = imageData[p1+3]*opacity/255.;
-   *ref = reflection;
-   *am = ambient;
+static inline double clamp(double v, double minVal, double maxVal) {
+    return (v < minVal) ? minVal : (v > maxVal ? maxVal : v);
+}
+
+void ImageTexture::getColor(unsigned char* toFill, double* am, double *op, double *ref, double x, double y) {
+    x = clamp(x, 0.0, 1.0);
+    y = clamp(y, 0.0, 1.0);
+    int xi = (int)(x * w);
+    int yi = (int)(y * h);
+    if (xi < 0)      xi = 0;
+    if (xi >= w)     xi = w - 1;
+    if (yi < 0)      yi = 0;
+    if (yi >= h)     yi = h - 1;
+    
+    int p1 = 4 * (xi + w * yi);
+    toFill[0] = imageData[p1];
+    toFill[1] = imageData[p1 + 1];
+    toFill[2] = imageData[p1 + 2];
+    *op = imageData[p1 + 3] * opacity / 255.0;
+    *ref = reflection;
+    *am = ambient;
 }
 
 void ImageTexture::maskImageAlpha(){

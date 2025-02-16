@@ -8,9 +8,8 @@ public:
    double thirdX;
    double ax, ay, az, bx, by, bz, cx, cy, cz;
    Triangle(Vector c, Vector b, Vector a, Texture* t);
-   double getIntersection(Ray ray);
+   double getIntersection(Ray ray) override;
    bool getLightIntersection(Ray ray, double* fill) override;
-
 };
 
 #endif

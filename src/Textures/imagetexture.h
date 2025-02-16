@@ -2,6 +2,7 @@
 #define __IMAGE_TEXTURE_H__
 #include "colortexture.h"
 
+
 class ImageTexture: public Texture{
 /** from 0 to 1 **/
 public:
@@ -25,6 +26,12 @@ public:
    void maskImage(ColorTexture* b);
    void maskImage(ColorTexture* b, unsigned char m);
    void maskImageAlpha();
+   ~ImageTexture(){
+      if (imageData) {
+        free(imageData);
+        imageData = nullptr;
+      }
+   }
 };
 
 #endif

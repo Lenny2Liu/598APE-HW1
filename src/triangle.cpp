@@ -51,12 +51,10 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0)
 //    unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
 //    return((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0)))?inf:time;
 // }
-//16.35s 
 
 
 double Triangle::getIntersection(Ray ray) {
    const double EPSILON = 1e-6;
-
    Vector v0 = Vector(ax, ay, az);
    Vector v1 = Vector(bx, by, bz);
    Vector v2 = Vector(cx, cy, cz);
@@ -82,7 +80,6 @@ double Triangle::getIntersection(Ray ray) {
    double t = f * edge2.dot(q);
    return (t > EPSILON) ? t : inf;
 }
-
 
 bool Triangle::getLightIntersection(Ray ray, double* fill){
    const double t = ray.vector.dot(vect);

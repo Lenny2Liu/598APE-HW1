@@ -46,6 +46,43 @@ void Autonoma::addShape(Shape* r){
       listEnd = hi;
    }
 }
+Autonoma::~Autonoma() {
+    if (skybox) {
+        delete skybox;
+        skybox = nullptr;
+    }
+
+    if (bvhRoot) {
+        deleteBVH(bvhRoot);
+        bvhRoot = nullptr;
+    }
+
+    ShapeNode* shapeNode = listStart;
+    while (shapeNode) {
+        ShapeNode* next = shapeNode->next;
+        delete shapeNode->data;
+        free(shapeNode);
+        shapeNode = next;
+    }
+    listStart = listEnd = nullptr;
+
+    LightNode* lightNode = lightStart;
+    while (lightNode) {
+        LightNode* next = lightNode->next;
+        delete lightNode->data;
+        free(lightNode);
+        lightNode = next;
+    }
+    lightStart = lightEnd = nullptr;
+}
+
+
+void deleteBVH(BVHNode* node) {
+   if (!node) return;
+   deleteBVH(node->left);
+   deleteBVH(node->right);
+   delete node;
+}
 
 void Autonoma::removeShape(ShapeNode* s){
    if(s==listStart){

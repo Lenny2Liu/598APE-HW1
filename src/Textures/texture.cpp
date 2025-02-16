@@ -9,6 +9,9 @@ double interpolate(double a,double b,double x)
 Texture::Texture(double am, double op, double ref):ambient(am),opacity(op), reflection(ref){}
 
 double fix(double a){
+   if (!std::isfinite(a)) {  
+      return 0.0; 
+   }
    a = fmod(a, 1.);
    if(a<0) a+=1.;
    return a;

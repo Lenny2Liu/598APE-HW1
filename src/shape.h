@@ -9,7 +9,8 @@ class Shape{
     double yaw, pitch, roll, xsin, xcos, ysin, ycos, zsin, zcos;
     Vector center;
     Texture* texture;
-    double textureX, textureY, mapX, mapY, mapOffX, mapOffY;
+    double textureX, textureY, mapX, mapY;
+    double mapOffX = 0.0, mapOffY = 0.0;
     Texture* normalMap;
     virtual double getIntersection(Ray ray) = 0;
     virtual bool getLightIntersection(Ray ray, double* fill) = 0;
@@ -22,7 +23,7 @@ class Shape{
     virtual void setPitch(double d) = 0;
     virtual void setRoll(double d) = 0;
     virtual void getAABB(AABB& outBox) const = 0;
-    virtual ~Shape() {}
+    virtual ~Shape();
 };
 
 struct ShapeInfo {

@@ -14,6 +14,12 @@ class Light{
    unsigned char* getColor(unsigned char a, unsigned char b, unsigned char c);
    Vector center;
    Light(const Vector & cente, unsigned char* colo);
+   ~Light(){
+      if (color) {
+         free(color);
+         color = nullptr;
+      }
+   }
 };
 
 struct LightNode{
@@ -71,11 +77,13 @@ public:
    std::vector<Shape*> shapes;
    Autonoma(const Camera &c);
    Autonoma(const Camera &c, Texture* tex);
+   ~Autonoma();
    void addShape(Shape* s);
    void removeShape(ShapeNode* s);
    void addLight(Light* s);
    void removeLight(LightNode* s);
 };
+void deleteBVH(BVHNode* node);
 
 void getLight(double* toFill, Autonoma* aut, Vector point, Vector norm, unsigned char r);
 
