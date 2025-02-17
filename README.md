@@ -2,6 +2,40 @@
 
 This repository contains code for homework 1 of 598APE.
 
+THE COMMAND THAT NEEDED ARE THE SAME AS DESCRIBED IN THIS DOCUMENT.
+
+For Dockerfile, you can directly used original docker/dockerfile to build the image
+
+There were 4 different optimizations was done
+
+1. BVH, and modification of triangle intersection algorithm implemented in git commit
+```bash
+c8842790c2fc875f2e471d9e181607bd734f74f4
+```
+
+2. LTO was added in 
+```bash
+3d8aa871b0fb0ff56120b9ac0e57e395eb63f554
+```
+
+3. SAH(Optimization of BVH) was implemented in 
+```bash
+2154bfc0b62ab2a9046ad6ebe55bd477e2fa536e
+```
+
+4. solveScalar was added
+```bash
+6ca7b33813acb721f88e930410dd6c7f7062771b
+```
+
+If you want undo the BVH optimization, you can simply comment the ``calcColor``, and use the previous calcColor(which was kept in the file)
+
+If you want to undo the SAH optimization, you can simply comment the ``buildBVH`` , and used the commented version.
+
+Modify the makefile to undo the LTO, information are commented in the makefile
+
+
+
 In particular, this repository is an implementation of a Raytracer.
 
 To compile the program run:

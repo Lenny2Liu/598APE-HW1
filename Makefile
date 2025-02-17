@@ -2,6 +2,19 @@ CXX       := g++
 CXXFLAGS  := -O3 -march=native -flto -fopenmp -std=c++11 -Werror -g
 LDFLAGS   := -lm -fopenmp -flto
 
+
+
+# # the following command is not using LTO
+# CXXFLAGS  := -O3 -g -Werror -fopenmp -std=c++11
+# LDFLAGS   := -lm -fopenmp
+
+
+# # the following command is not using Parallelization
+# CXXFLAGS  := -O3 -g -Werror -std=c++11
+# LDFLAGS   := -lm
+
+
+
 OBJ_DIR   := bin
 
 CPP_FILES         := $(wildcard src/*.cpp)
